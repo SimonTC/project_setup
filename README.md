@@ -4,7 +4,7 @@ Auto setup of new projects
 This script is used to setup new python projects.
 It performs the following tasks:
 
-* Sets up the following folder structure:
+1. Sets up the following folder structure:
     ```python
     project_name/
         project_name/
@@ -13,9 +13,8 @@ It performs the following tasks:
             __init__.py
     ```
 
-
-* Creates a simple conda environment containing pip and python as dependencies.
-* Sets up git version control.
+2. Creates a simple conda environment containing pip and python as dependencies.
+3. Sets up git version control.
 
 The folder structure is from Learn Python The Hard Way.
 The environment and git setup is inspired by the following article:
