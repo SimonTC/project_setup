@@ -71,7 +71,8 @@ def create_conda_environemt_file(project_name, project_dir):
             'dependencies:',
             '- pip',
             '- python',
-            '#- anaconda'
+            '#- anaconda',
+            '- flake8 #Only needed for linter-flake8 in the atom editor'
         ]
         text = '\n'.join(lines)
         environment_file.write(text)
