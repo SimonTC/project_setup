@@ -24,3 +24,10 @@ How to use it
 ---------------
 Call the project_setup.py file from the folder where you want to create the new project.
 
+
+Dependencies
+--------------
+* Conda - To setup the conda environments. Can be installed through Anaconda or Miniconda
+* Git - To setup Git repository
+* Python 3
+
