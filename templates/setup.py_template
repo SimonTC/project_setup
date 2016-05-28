@@ -1,0 +1,16 @@
+from setuptools import setup
+
+config = {{
+    'description': 'My Project',
+    'author': 'Simon T. Clement',
+    'url': 'URL to get it at',
+    'download_url': 'Where to download it',
+    'author_email': 'simon.clement@gmail.com',
+    'version': '0.0dev',
+    'install_requires': ['pytest'],
+    'packages': ['{project_name}'],
+    'scripts': [],
+    'name': '{project_name}'
+}}
+
+setup(**config)

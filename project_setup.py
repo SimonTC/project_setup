@@ -41,42 +41,32 @@ def create_init_files(project_name, project_dir, package_folders):
     logger.info('Init files created succesfully')
 
 
-def create_setup_file(project_name, project_dir):
-    with open('{}/setup.py'.format(project_dir), 'w') as setup_file:
-        lines = [
-            "from setuptools import setup\n",
-            "\n",
-            "config = {\n",
-            "    'description': 'My Project',\n",
-            "    'author': 'Simon T. Clement',\n",
-            "    'url': 'URL to get it at',\n",
-            "    'download_url': 'Where to download it',\n",
-            "    'author_email': 'simon.clement@gmail.com',\n",
-            "    'version': '0.0dev',\n",
-            "    'install_requires': ['pytest'],\n",
-            "    'packages': ['{0}'],\n".format(project_name),
-            "    'scripts': [],\n",
-            "    'name': '{0}'\n".format(project_name),
-            "}\n",
-            "\n",
-            "setup(**config)\n"]
-        setup_file.writelines(lines)
-    logger.info('setup.py created succesfully')
+def load_file_to_string(file_path):
+    with open(file_path, 'r')as source_file:
+        lines = []
+        for line in source_file:
+            lines.append(line)
+        source_string = ''.join(lines)
+    return source_string
 
 
-def create_conda_environemt_file(project_name, project_dir):
-    with open('{}/environment.yml'.format(project_dir), 'w') as environment_file:
-        lines = [
-            'name: {}'.format(project_name),
-            'dependencies:',
-            '- pip',
-            '- python',
-            '#- anaconda',
-            '- flake8 #Only needed for linter-flake8 in the atom editor'
-        ]
-        text = '\n'.join(lines)
-        environment_file.write(text)
-    logger.info('Environment file created succesfully')
+def create_file_from_template(file_name, value_dict, project_dir, template_dir):
+    """
+    Creates a file from a template saved in the templates folder.
+    file_name: Name of the target file including extension.
+               The name of the template file has to be the same with _template
+               appended
+    value_dict: dictionary containing values for the key words used in the
+                template file.
+    project_dir: directory where the target file is placed.
+    template_dir: directory where the template file is found.
+    """
+    template_path = '{}/{}_template'.format(template_dir, file_name)
+    raw_string = load_file_to_string(template_path)
+    text = raw_string.format(**value_dict)
+    with open('{}/{}'.format(project_dir, file_name), 'w') as target_file:
+        target_file.write(text)
+    logger.info('"{}" succesfully created'.format(file_name))
 
 
 def perform_bash_command(command):
@@ -165,6 +155,7 @@ if __name__ == '__main__':
     logger.info('Create conda environment: {}'.format(create_env))
     caller_dir = os.getcwd()
     current_dir = os.path.dirname(os.path.abspath(__file__))
+    template_dir = '{}/templates'.format(current_dir)
     project_dir = '/'.join([caller_dir, project_name])
     logger.info(
         'Creating the project skeleton for {} in the folder {}'.format(
@@ -191,11 +182,17 @@ if __name__ == '__main__':
     create_init_files(project_name, project_dir, package_folders)
 
     # Create setup file
-    create_setup_file(project_name, project_dir)
+    create_file_from_template(file_name='setup.py',
+                              value_dict={'project_name': project_name},
+                              project_dir=project_dir,
+                              template_dir=template_dir)
 
     if create_env:
         # Create conda environment.yml file
-        create_conda_environemt_file(project_name, project_dir)
+        create_file_from_template(file_name='environment.yml',
+                                  value_dict={'project_name': project_name},
+                                  project_dir=project_dir,
+                                  template_dir=template_dir)
 
         # Create conda environment
         setup_conda_environment(project_name)
@@ -207,30 +204,15 @@ if __name__ == '__main__':
 
     if create_git:
         # Copy the git .ignore file to project directory
-        template_file = '{}/gitignore_template'.format(current_dir)
+        template_file = '{}/gitignore_template'.format(template_dir)
         shutil.copy(template_file, '{}/.gitignore'.format(project_dir))
 
         # Create readme file
-        with open('{}/README.md'.format(project_dir), 'w') as f:
-            lines = [
-                '{}'.format(project_name),
-                '==================',
-                'This project is still under development.',
-                'This README file has been created automatically using my '
-                'project_setup.py script version {}.'.format(VERSION),
-                'Usage',
-                '------------',
-                'To get up and running with this project just download the project'
-                ' and cd into the main directory. Run the command '
-                '"conda env create" and activate it afterwards with '
-                '"source activate {}"'.format(project_name),
-                '\nDependencies:',
-                '* Anaconda - needed to setup the conda environment',
-                '* (Optional) autoenv - if autoenv is installed, the environment'
-                ' is automatically activated when entering the poject directory'
-            ]
-            text = '\n'.join(lines)
-            f.write(text)
+        create_file_from_template(file_name='README.md',
+                                  value_dict={'project_name': project_name},
+                                  project_dir=project_dir,
+                                  template_dir=template_dir)
+
         # Make folder a git repository
         init_command = 'git init'
         errs = perform_bash_command(init_command.split())

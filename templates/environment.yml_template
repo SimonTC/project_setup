@@ -1,0 +1,6 @@
+name: {project_name}
+dependencies:
+- pip
+- python
+#- anaconda
+- flake8 #Only needed for linter-flake8 in the atom editor

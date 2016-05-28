@@ -1,0 +1,11 @@
+{project_name}
+==================
+This project is still under development.
+This README file has been created automatically using the project_setup.py script version 0.1.
+Usage
+------------
+To get up and running with this project just download the project and cd into the main directory. Run the command "conda env create" and activate it afterwards with "source activate {project_name}"
+
+Dependencies:
+* Anaconda - needed to setup the conda environment
+* (Optional) autoenv - if autoenv is installed, the environment is automatically activated when entering the poject directory
